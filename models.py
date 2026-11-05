@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Table, Boolean
 from db import Base
 from datetime import datetime
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 #Association Table for multiple Mapping 
 like_posts = Table(
@@ -16,11 +16,11 @@ class UserModel(Base):
 
     __tablename__ = "User_Table"
 
-    id = Column(Integer, primary_key=True)
-    username = Column(String, nullable=True)
-    email = Column(String, unique=True, index=True)
-    hash_password = Column(String, nullable=False)
-    is_active = Column(Boolean, default=True)
+    id : Mapped[int] = mapped_column(Integer, primary_key=True)
+    username : Mapped[str] = mapped_column(String, nullable=True)
+    email : Mapped[str] = mapped_column(String, unique=True)
+    hashed_password : Mapped[str] = mapped_column(String, nullable=False)
+    is_active : Mapped[bool] = mapped_column(Boolean, default=True)
 
     #Mapping Post with Users
     posts = relationship("PostModel", back_populates="users")
