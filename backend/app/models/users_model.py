@@ -1,6 +1,5 @@
 from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Table, Boolean
 from backend.app.database.db import Base
-from datetime import datetime
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 #Association Table for multiple Mapping 
@@ -27,26 +26,3 @@ class UserModel(Base):
 
     #multiple relation mapping
     post_liked = relationship("PostModel", secondary=like_posts, back_populates="liked_by_user")
-
-class PostModel(Base):
-
-    __tablename__ = "Post_Table"
-
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("User_Table.id"))
-    date = Column(DateTime, default=datetime.now())
-    title = Column(String)
-    description = Column(String)
-
-    #Mapping Users with Posts
-    users = relationship("UserModel", back_populates="posts")
-
-    #multiple relation mapping
-    liked_by_user = relationship("UserModel", secondary=like_posts, back_populates="post_liked")
-
-class RPModel(Base):
-
-    __tablename__ = "Reset_Password"
-
-    email : Mapped[str] = mapped_column(primary_key=True, unique=True)
-    code : Mapped[str] = mapped_column()

@@ -1,11 +1,14 @@
-from sqlalchemy.orm import Session
-from datetime import datetime, timedelta, timezone
-from jose import jwt, JWTError
-import backend.app.models.models as models, backend.app.schemas.schemas as schemas
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
 from random import randint
+
+from sqlalchemy.orm import Session
+from datetime import datetime, timezone, timedelta
+from jose import jwt, JWTError
+from passlib.context import CryptContext
+
+import backend.app.models as models
+import backend.app.schemas as schemas
 from dotenv import load_dotenv
 import os
 
@@ -18,38 +21,6 @@ ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="token")
 bcrypt_context = CryptContext(schemes=["bcrypt"])
 
-#get user from the user id
-def get_user_by_id(db : Session, user_id : int):
-    return db.query(models.UserModel).filter(models.UserModel.id == user_id).first()
-
-#get user from email id
-def get_user_from_email(db : Session, email : str):
-    return db.query(models.UserModel).filter(models.UserModel.email == email).first()
-
-#get all user from skip to limit
-def get_all_user(db : Session, skip : int = 0, limit : int = 10):
-    return db.query(models.UserModel).offset(skip).limit(limit).all()
-
-#delete user by user_id
-def delete_user(db : Session, user : models.UserModel):
-    db.delete(user)
-    db.commit()
-
-
-#get all post
-def get_posts(db : Session, user_id : int):
-    return db.query(models.PostModel).filter(models.PostModel.user_id == user_id).all()
-
-#get user's post by post_id
-def get_post(db : Session, user_id : int, post_id : int):
-    return db.query(models.PostModel).filter(models.PostModel.id == post_id, models.PostModel.user_id == user_id).first()
-
-#create post
-def create_post(db : Session, post : schemas.CreatePost, user_id : int):
-    db_post = models.PostModel(**post.model_dump(), user_id = user_id)
-    db.add(db_post)
-    db.commit()
-    return db_post
 
 #check if the user exist using email or username
 async def check_existing_user(db: Session, email: str, username: str = ""):
@@ -99,14 +70,6 @@ async def authenticate(db : Session, username : str, password : str):
     if not bcrypt_context.verify(password, db_user.hashed_password):
         return None
     return db_user
-
-#update username
-async def update_user(db : Session, db_user : models.UserModel, user : schemas.UpdateUser):
-    db_user.username = user.username or db_user.username
-    db.commit()
-    db.refresh(db_user)
-    return db_user
-
 
 #update password functions
 async def generate_code(db: Session, email : str):
