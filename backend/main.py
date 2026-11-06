@@ -1,13 +1,15 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from db import SessionLocal, engine
-import models, schemas, services
-from db import get_db
+from backend.app.database.db import SessionLocal, engine
+import backend.app.models.models as models, backend.app.schemas.schemas as schemas, backend.app.services.services as services
+from backend.app.database.db import get_db
 from sqlalchemy.orm import Session
 
 models.Base.metadata.create_all(bind = engine)
 
-app = FastAPI()
+app = FastAPI(title="Instagram-Clone",
+              description="Backend of Instagram",
+              version="0.1")
  
 #sign up route
 #create user 
@@ -89,5 +91,31 @@ def get_user_post(user_id : int, post_id : int, db : Session = Depends(get_db)):
             raise HTTPException(status_code=404, detail="Post NOT found")
       return db_post
 
+#update username 
+@app.put("/users/{username}", status_code=status.HTTP_204_NO_CONTENT)
+async def update_username(token: str, user : schemas.UpdateUser, db : Session = Depends(get_db)):
+      db_user = await services.get_current_user(db, token)
+      if not db_user:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not autherized")
+      db_user = await services.update_user(db, db_user, user)
 
+#Reset Password
+@app.post("/resetpassword/sendcode")
+async def reset_sent_code(email : str, db : Session = Depends(get_db)):
+      db_user = await services.check_existing_user(db, email)
+      if not db_user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+      code = await services.generate_code(db, email)
+      await services.verify_code(db, email, code)
+      return code
 
+@app.post("/resetpassword/vefifycode")
+async def reset_verify_code(email : str, code : str, db : Session = Depends(get_db)):
+      return await services.verify_code(db, email, code)
+
+@app.post("/resetpassword/reset", status_code=status.HTTP_204_NO_CONTENT)
+async def reset_password(email : str, password : str, db : Session = Depends(get_db)):
+      db_user =  services.get_user_from_email(db, email=email)
+      if not db_user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User Not Found")
+      await services.update_password(db, db_user, password)

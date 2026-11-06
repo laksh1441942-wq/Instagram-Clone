@@ -1,6 +1,7 @@
 # Instagram Clone
 
-A work-in-progress backend for an Instagram-style social media application.
+A work-in-progress FastAPI backend for an Instagram-style social media
+application.
 
 ## Project status
 
@@ -8,17 +9,15 @@ A work-in-progress backend for an Instagram-style social media application.
 
 ### Completed
 
-- [x] Set up a FastAPI application.
+- [x] Set up a FastAPI application under `backend/`.
 - [x] Added SQLite database support with SQLAlchemy.
-- [x] Added database session management in `db.py`.
-- [x] Created user and post models with SQLAlchemy relationships.
-- [x] Added a many-to-many relationship for post likes.
+- [x] Added database session management and SQLAlchemy models.
+- [x] Added user and post relationships, including post likes.
 - [x] Added Pydantic schemas for users and posts.
-- [x] Implemented user registration.
-- [x] Implemented login with password hashing and JWT session tokens.
-- [x] Implemented fetching the current user profile.
-- [x] Implemented user listing, lookup, and deletion.
+- [x] Implemented user registration and JWT login.
+- [x] Implemented fetching, listing, and deleting users.
 - [x] Implemented post creation and post retrieval by user or post ID.
+- [x] Added password reset code generation and password updates.
 - [x] Added an Alembic migration for the updated user model.
 
 ### Next steps
@@ -29,8 +28,8 @@ A work-in-progress backend for an Instagram-style social media application.
 - [ ] Add endpoints for liking and unliking posts.
 - [ ] Add image upload and media storage.
 - [ ] Add comments, follows, and a feed.
-- [ ] Move secrets and database configuration into environment variables.
-- [ ] Add dependency metadata and deployment documentation.
+- [ ] Move database configuration into environment variables.
+- [ ] Add automated deployment documentation.
 
 ## Tech stack
 
@@ -56,38 +55,49 @@ A work-in-progress backend for an Instagram-style social media application.
 | `POST` | `/posts` | Create a post |
 | `GET` | `/posts/{user_id}/posts` | Retrieve all posts for a user |
 | `GET` | `/posts/{user_id}/{post_id}` | Retrieve one of a user’s posts |
+| `PUT` | `/users/{username}` | Update the authenticated user’s username |
+| `POST` | `/resetpassword/sendcode` | Generate a password reset code |
+| `POST` | `/resetpassword/vefifycode` | Verify a password reset code |
+| `POST` | `/resetpassword/reset` | Set a new password |
 
 ## Running locally
 
-1. Create and activate a Python virtual environment.
-2. Install the project dependencies used by the application.
-3. Start the development server:
+1. Create and activate a Python virtual environment from the repository root.
+2. Install the backend dependencies:
 
    ```bash
-   uvicorn main:app --reload
+   python -m pip install -r backend/requirements.txt
    ```
 
-4. Open the interactive API documentation at
+3. Copy `backend/.env.example` to `.env` and set a secure `SECRET_KEY`.
+4. Start the development server from the repository root:
+
+   ```bash
+   uvicorn backend.main:app --reload
+   ```
+
+5. Open the interactive API documentation at
    [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
 
-Authentication settings are loaded from `.env`. Replace the placeholder
-`SECRET_KEY` with a long, random value before using the application outside
-local development.
+Authentication settings are loaded from `.env`. Use a long, random
+`SECRET_KEY` outside local development. The SQLite database is stored in
+`sql.db` in the directory where the server is started.
 
-The local SQLite database is stored in `sql.db`. Apply Alembic migrations when
-working with an existing database:
+Apply Alembic migrations from the repository root when working with an
+existing database:
 
 ```bash
-alembic upgrade head
+alembic -c backend/alembic.ini upgrade head
 ```
 
 ## Project structure
 
 | File | Responsibility |
 | --- | --- |
-| `main.py` | FastAPI app and route definitions |
-| `db.py` | Database engine, session, and declarative base |
-| `models.py` | SQLAlchemy models and relationships |
-| `schemas.py` | Request and response schemas |
-| `services.py` | Database queries and authentication logic |
-| `migrations/` | Alembic configuration and migration history |
+| `backend/main.py` | FastAPI app entry point |
+| `backend/app/database/db.py` | Database engine, session, and declarative base |
+| `backend/app/models/models.py` | SQLAlchemy models and relationships |
+| `backend/app/schemas/schemas.py` | Request and response schemas |
+| `backend/app/services/services.py` | Database queries and authentication logic |
+| `backend/migrations/` | Alembic configuration and migration history |
+| `backend/requirements.txt` | Pinned Python dependencies |

@@ -1,10 +1,11 @@
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta, timezone
 from jose import jwt, JWTError
-import models, schemas
+import backend.app.models.models as models, backend.app.schemas.schemas as schemas
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
+from random import randint
 from dotenv import load_dotenv
 import os
 
@@ -83,7 +84,6 @@ async def create_user(db : Session , user : schemas.CreateUser):
     db_user = models.UserModel(
         username = user.username,
         email = user.email,
-        password = user.password,
         hashed_password = bcrypt_context.hash(user.password),
         is_active = True
     )
@@ -99,3 +99,36 @@ async def authenticate(db : Session, username : str, password : str):
     if not bcrypt_context.verify(password, db_user.hashed_password):
         return None
     return db_user
+
+#update username
+async def update_user(db : Session, db_user : models.UserModel, user : schemas.UpdateUser):
+    db_user.username = user.username or db_user.username
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+#update password functions
+async def generate_code(db: Session, email : str):
+    code = str(randint(100000, 999999))
+    db_reset = db.query(models.RPModel).filter(models.RPModel.email == email).first()
+    if db_reset:
+        db_reset.code = code
+    else:
+        db_reset = models.RPModel(email = email, code= code)
+        db.add(db_reset)
+    db.commit()
+    return code
+
+async def verify_code(db : Session, email : str, code : str):
+    db_reset = db.query(models.RPModel).filter(models.RPModel.email == email).first()
+    if not db_reset:
+        return False
+    return db_reset.code == code
+
+async def fake_email_send(email : str):
+    print(f"code sent to {email}")
+
+async def update_password(db : Session, user : models.UserModel, password : str):
+    user.hashed_password = bcrypt_context.hash(password)
+    db.commit()

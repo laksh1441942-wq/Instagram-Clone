@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, Integer, ForeignKey, DateTime, Table, Boolean
-from db import Base
+from backend.app.database.db import Base
 from datetime import datetime
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
@@ -43,3 +43,10 @@ class PostModel(Base):
 
     #multiple relation mapping
     liked_by_user = relationship("UserModel", secondary=like_posts, back_populates="post_liked")
+
+class RPModel(Base):
+
+    __tablename__ = "Reset_Password"
+
+    email : Mapped[str] = mapped_column(primary_key=True, unique=True)
+    code : Mapped[str] = mapped_column()
