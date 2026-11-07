@@ -19,7 +19,7 @@ app = FastAPI(
     title="Instagram Clone API",
     description="Backend API for Instagram Clone",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 

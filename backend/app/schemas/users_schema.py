@@ -1,21 +1,41 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, EmailStr
+from typing import Optional
+from datetime import datetime
+
 from backend.app.schemas.posts_schema import Post
 
 
+
 class UserBase(BaseModel):
-    username : str
-    email : str
+    username: str
+    email: EmailStr
+    name: str
+    dob: Optional[datetime] = None
+    gender: Optional[str] = None
+    bio: Optional[str] = None
+    location: Optional[str] = None
+    profile_pic: Optional[str] = None
+
 
 class CreateUser(UserBase):
-    password : str
+    password: str = Field(min_length=8)
+
 
 class User(UserBase):
-    id : int 
-    is_active : bool
-    posts : list[Post] = [] 
+    id: int
+    is_active: Optional[bool] = True
+    created_at: datetime
+    posts: list[Post] = Field(default_factory=list)
 
     class Config:
         from_attributes = True
 
+Post.model_rebuild(_types_namespace={"User": User})
+
 class UpdateUser(BaseModel):
-    username : str
+    name: Optional[str] = None
+    dob: Optional[datetime] = None
+    gender: Optional[str] = None
+    bio: Optional[str] = None
+    location: Optional[str] = None
+    profile_pic: Optional[str] = None
