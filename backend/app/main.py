@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from backend.app.routers import auth_routes, users_routes, posts_routes
+from backend.app.routers import auth_routes, users_routes, posts_routes, likes_routes
 
 
 @asynccontextmanager
@@ -27,6 +27,7 @@ app = FastAPI(
 app.include_router(auth_routes.router)
 app.include_router(users_routes.router)
 app.include_router(posts_routes.router)
+app.include_router(likes_routes.router)
 # app.include_router(comments.router)
 # app.include_router(likes.router)
 

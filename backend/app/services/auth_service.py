@@ -62,7 +62,12 @@ async def create_user(db: Session, user: schemas.CreateUser):
         username=user.username,
         email=user.email,
         hashed_password=bcrypt_context.hash(user.password),
-        is_active=True,
+        name=user.name,
+        dob=user.dob,
+        gender=user.gender,
+        profile_pic=user.profile_pic,
+        bio=user.bio,
+        location=user.location
     )
     db.add(db_user)
     db.commit()

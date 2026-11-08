@@ -5,7 +5,6 @@ from datetime import datetime
 from backend.app.schemas.posts_schema import Post
 
 
-
 class UserBase(BaseModel):
     username: str
     email: EmailStr
@@ -21,6 +20,13 @@ class CreateUser(UserBase):
     password: str = Field(min_length=8)
 
 
+class UserSummary(UserBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
 class User(UserBase):
     id: int
     is_active: Optional[bool] = True
@@ -30,7 +36,9 @@ class User(UserBase):
     class Config:
         from_attributes = True
 
-Post.model_rebuild(_types_namespace={"User": User})
+
+Post.model_rebuild(_types_namespace={"UserSummary": UserSummary})
+
 
 class UpdateUser(BaseModel):
     name: Optional[str] = None

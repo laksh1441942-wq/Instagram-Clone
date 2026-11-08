@@ -25,9 +25,16 @@ def get_user_posts(author_id: int, db: Session = Depends(get_db)):
 
 
 # get specific post of a user with post_id
-@router.get("/{user_id}/{post_id}", response_model=schemas.Post)
-def get_user_post(user_id: int, post_id: int, db: Session = Depends(get_db)):
-    db_post = services.get_post_by_id(db, post_id)
+@router.get("/{post_id}", response_model=schemas.Post)
+async def get_user_post( post_id: int, db: Session = Depends(get_db)):
+    db_post = await services.get_post_by_id(db, post_id)
     if not db_post:
         raise HTTPException(status_code=404, detail="Post NOT found")
     return db_post
+
+@router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_post( post_id :int, db :Session=Depends(get_db)):
+    db_post = await services.get_post_by_id(db, post_id)
+    if not db_post:
+        raise HTTPException(status_code=404, detail="Post NOT found")
+    await services.delete_post(db, post_id)

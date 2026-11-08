@@ -13,9 +13,13 @@ def get_user_by_id(db: Session, user_id: int):
 def get_user_from_email(db: Session, email: str):
     return db.query(models.UserModel).filter(models.UserModel.email == email).first()
 
+#get user by username
+def get_user_by_username(db : Session, username : str):
+    return db.query(models.UserModel).filter(models.UserModel.username == username).first()
+
 
 # get all user from skip to limit
-def get_all_user(db: Session, skip: int = 0, limit: int = 10):
+async def get_all_user(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.UserModel).offset(skip).limit(limit).all()
 
 

@@ -17,62 +17,70 @@ def get_posts(db: Session, author_id: int):
 
 # get user's post by post_id
 async def get_post_by_id(db: Session, post_id: int) -> schemas.Post:
-    return (
-        db.query(models.PostModel)
-        .filter(models.PostModel.id == post_id)
-        .first()
-    )
+    return db.query(models.PostModel).filter(models.PostModel.id == post_id).first()
 
 
 # create post
 def create_post(db: Session, post: schemas.CreatePost, author_id: int):
-    db_post = models.PostModel(**post.model_dump(), author_id=author_id)
+    db_post = models.PostModel(
+        author_id=author_id,
+        title=post.title,
+        content=post.content,
+        image=post.image,
+        location=post.location,
+    )
     db.add(db_post)
     db.commit()
     return db_post
 
-#delete post
-async def delete_post(db : Session, post_id : int):
-    post =  await get_post_by_id(db, post_id)
+
+# delete post
+async def delete_post(db: Session, post_id: int):
+    post = await get_post_by_id(db, post_id)
     db.delete(post)
     db.commit()
 
-#LIKE the post
-async def like_post(db : Session, post_id : int, username : int):
+
+# LIKE the post
+async def like_post(db: Session, post_id: int, username: str):
     post = await get_post_by_id(db, post_id)
     if not post:
         return False, "invalid post_id"
-    user = db.query(models.UserModel).filter(models.UserModel.username == username)
+    user = (
+        db.query(models.UserModel).filter(models.UserModel.username == username).first()
+    )
     if not user:
         return False, "invalid username"
-    if user in models.PostModel.liked_by_user:
+    if user in post.liked_by_user:
         return False, "already liked"
-    models.PostModel.liked_by_user.append(user)
-    models.PostModel.likes_count = len(models.PostModel.liked_by_user.append(user))
-
+    post.liked_by_user.append(user)
+    post.likes_count = len(post.liked_by_user)
     db.commit()
+    db.refresh(post)
+    return post
 
-#UNLIKE the post
-async def unlike_post(db : Session, post_id : int, username : str):
+
+# UNLIKE the post
+async def unlike_post(db: Session, post_id: int, username: str):
     post = await get_post_by_id(db, post_id)
     if not post:
         return False, "invalid post_id"
-    
-    user = db.query(models.UserModel).filter(models.UserModel.username == username)
-
+    user = (
+        db.query(models.UserModel).filter(models.UserModel.username == username).first()
+    )
     if not user:
         return False, "invalid username"
-    
-    if user not in models.PostModel.liked_by_user:
-        return False, "Havn't liked the post"
-    
-    models.PostModel.liked_by_user.remove(user)
-    models.PostModel.likes_count = len(models.PostModel.liked_by_user.append(user))
-
+    if user not in post.liked_by_user:
+        return False, "already unliked"
+    post.liked_by_user.remove(user)
+    post.likes_count = len(post.liked_by_user)
     db.commit()
+    db.refresh(post)
+    return post
 
-#get list of users who liked the post
-async def list_of_liker(db : Session, post_id : int) -> list[schemas.User]:
+
+# get list of users who liked the post
+async def list_of_liker(db: Session, post_id: int) -> list[schemas.UserSummary]:
     post = await get_post_by_id(db, post_id)
     if not post:
         return []
@@ -80,10 +88,9 @@ async def list_of_liker(db : Session, post_id : int) -> list[schemas.User]:
     return posts
 
 
-
 # create Hashtags
 def create_hashtag(db: Session, post: models.PostModel):
-    regex = r"#/w+"
+    regex = r"#\w+"
     matches = re.findall(regex, post.content)
     for tags in matches:
         tag = tags[1:]
@@ -93,9 +100,9 @@ def create_hashtag(db: Session, post: models.PostModel):
             db.add(hashtag)
             db.flush()
         post.hashtag.append(hashtag)
-        db.commit()
-        db.refresh(post)
-        return post
+    db.commit()
+    db.refresh(post)
+    return post
 
 
 # find POSTS from hashtags
@@ -134,4 +141,3 @@ async def get_random_posts(
         result.append(post_dict)
 
     return result
-

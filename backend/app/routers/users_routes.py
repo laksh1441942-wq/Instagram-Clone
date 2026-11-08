@@ -22,8 +22,8 @@ async def get_current_user(token: str, db: Session = Depends(get_db)):
 
 # get all users
 @router.get("/users", response_model=list[schemas.User])
-def get_all_users(skip: int = 0, limit: int = 5, db: Session = Depends(get_db)):
-    db_user = services.get_all_user(db, skip, limit)
+async def get_all_users(skip: int = 0, limit: int = 5, db: Session = Depends(get_db)):
+    db_user = await services.get_all_user(db, skip, limit)
     return db_user
 
 

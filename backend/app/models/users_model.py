@@ -7,7 +7,7 @@ from sqlalchemy.orm import relationship, Mapped, mapped_column
 like_posts = Table(
     "Like_Posts",
     Base.metadata,
-    Column("like_id", primary_key=True),
+    Column("like_id", Integer, primary_key=True, autoincrement=True),
     Column("post_id", ForeignKey("Post_Table.id")),
     Column("user_id", ForeignKey("User_Table.id")),
 )
@@ -27,7 +27,7 @@ class UserModel(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
     # Profile Info
-    name : Mapped[str] = mapped_column(String)
+    name: Mapped[str] = mapped_column(String)
     dob: Mapped[datetime] = mapped_column(DateTime)
     gender: Mapped[str] = mapped_column(String)
     profile_pic: Mapped[str] = mapped_column(String)  # link to pfp in database
