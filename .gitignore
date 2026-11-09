@@ -1,11 +1,35 @@
+# Python
 .venv/
 venv/
 __pycache__/
 *.py[cod]
 .pytest_cache/
-.DS_Store
+.mypy_cache/
+.ruff_cache/
 
-# Local configuration and databases
+# Environment files and local databases
 .env
+.env.*
+!.env.example
 *.db
-.vscode
+
+# IDE and OS files
+.DS_Store
+.idea/
+
+# Flutter/Dart
+frontend/.dart_tool/
+frontend/.packages
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/.flutter_tool_state
+frontend/build/
+frontend/coverage/
+frontend/.metadata
+frontend/**/Generated.xcconfig
+frontend/**/ephemeral/
+frontend/**/local.properties
+frontend/**/Pods/
+frontend/**/*.iml
+
+# Keep workspace settings, including Black-on-save configuration, trackable.

@@ -1,11 +1,11 @@
 # Instagram Clone
 
-A work-in-progress FastAPI backend for an Instagram-style social media
-application.
+A work-in-progress full-stack Instagram-style social media application with a
+FastAPI backend and Flutter frontend.
 
 ## Project status
 
-**Current phase:** Core backend and authentication
+**Current phase:** Core backend, authentication, and initial Flutter UI
 
 ### Completed
 
@@ -22,12 +22,13 @@ application.
 - [x] Added Alembic migrations for the application schema.
 - [x] Centralized the SQLite database path for FastAPI and Alembic.
 - [x] Added Black formatting configuration for Python files.
+- [x] Added an initial Flutter frontend with responsive layout scaffolding.
+- [x] Added a login screen and shared text-field widget.
 
 ### Next steps
 
-- [ ] Add automated tests for authentication, users, and posts.
+- [ ] Expand automated tests for authentication, users, and posts.
 - [ ] Protect user and post operations with authenticated-user dependencies.
-- [ ] Protect user, post, and like operations with authenticated-user dependencies.
 - [ ] Add image upload and media storage.
 - [ ] Add comments, follows, and a feed.
 - [ ] Add automated deployment documentation.
@@ -42,6 +43,8 @@ application.
 - Pydantic
 - JWT authentication
 - bcrypt password hashing
+- Flutter
+- Dart
 
 ## API endpoints
 
@@ -90,20 +93,33 @@ application.
 6. Open the interactive API documentation at
    [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
 
+### Frontend
+
+Install the Flutter SDK, then run the frontend from its directory:
+
+```bash
+cd frontend
+flutter pub get
+flutter run
+```
+
+Use `flutter analyze` to check the Dart source and `flutter test` to run the
+Flutter test suite.
+
 Authentication settings are loaded from `.env`. Use a long, random
 `SECRET_KEY` outside local development. The SQLite database is always stored
 at `backend/sql.db`, regardless of the directory used to start the server.
+
+Run the backend tests from the repository root:
+
+```bash
+pytest
+```
 
 To check migration consistency:
 
 ```bash
 alembic -c backend/alembic.ini check
-```
-
-Black is configured for the project virtual environment. Install it if needed:
-
-```bash
-python -m pip install black
 ```
 
 ## Project structure
@@ -119,3 +135,5 @@ python -m pip install black
 | `backend/app/routers/` | FastAPI route definitions |
 | `backend/migrations/` | Alembic configuration and migration history |
 | `backend/requirements.txt` | Pinned Python dependencies |
+| `frontend/lib/` | Flutter application source |
+| `frontend/pubspec.yaml` | Flutter dependencies and project metadata |
