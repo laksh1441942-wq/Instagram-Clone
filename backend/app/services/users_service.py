@@ -5,7 +5,7 @@ import backend.app.schemas as schemas
 
 
 # get user from the user id
-def get_user_by_id(db: Session, user_id: int):
+def get_user_by_id(db: Session, user_id: int) -> models.UserModel:
     return db.query(models.UserModel).filter(models.UserModel.id == user_id).first()
 
 
@@ -13,9 +13,10 @@ def get_user_by_id(db: Session, user_id: int):
 def get_user_from_email(db: Session, email: str):
     return db.query(models.UserModel).filter(models.UserModel.email == email).first()
 
-#get user by username
-def get_user_by_username(db : Session, username : str):
-    return db.query(models.UserModel).filter(models.UserModel.username == username).first()
+
+# get user by username
+def get_user_by_username(db: Session, username: str) -> models.UserModel:
+    return db.query(models.UserModel).filter_by(username=username).first()
 
 
 # get all user from skip to limit

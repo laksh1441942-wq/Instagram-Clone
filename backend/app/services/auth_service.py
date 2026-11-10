@@ -2,6 +2,7 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from random import randint
 
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone, timedelta
 from jose import jwt, JWTError
@@ -23,14 +24,13 @@ bcrypt_context = CryptContext(schemes=["bcrypt"])
 
 
 # check if the user exist using email or username
-async def check_existing_user(db: Session, email: str, username: str = ""):
-    return (
-        db.query(models.UserModel)
-        .filter(
-            (models.UserModel.username == username) | (models.UserModel.email == email)
-        )
-        .first()
-    )
+async def check_existing_user(db: Session, username: str, email: str = "") -> models.UserModel:
+    filters = []
+    if username:
+        filters.append(models.UserModel.username == username)
+    if email:
+        filters.append(models.UserModel.email == email)
+    return db.query(models.UserModel).filter(or_(*filters)).first() if filters else None
 
 
 # create token for authentication

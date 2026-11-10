@@ -16,7 +16,7 @@ def get_posts(db: Session, author_id: int):
 
 
 # get user's post by post_id
-async def get_post_by_id(db: Session, post_id: int) -> schemas.Post:
+async def get_post_by_id(db: Session, post_id: int):
     return db.query(models.PostModel).filter(models.PostModel.id == post_id).first()
 
 
@@ -30,7 +30,10 @@ def create_post(db: Session, post: schemas.CreatePost, author_id: int):
         location=post.location,
     )
     db.add(db_post)
+    db.flush()
+    create_hashtag(db, db_post)
     db.commit()
+    db.refresh(db_post)
     return db_post
 
 
@@ -55,6 +58,14 @@ async def like_post(db: Session, post_id: int, username: str):
         return False, "already liked"
     post.liked_by_user.append(user)
     post.likes_count = len(post.liked_by_user)
+
+    like_activity = models.ActivityModel(
+        username=post.author.username,
+        liked_post_id=post_id,
+        liker_username=username,
+        liked_profile_image=post.image,
+    )
+    db.add(like_activity)
     db.commit()
     db.refresh(post)
     return post
@@ -74,6 +85,7 @@ async def unlike_post(db: Session, post_id: int, username: str):
         return False, "already unliked"
     post.liked_by_user.remove(user)
     post.likes_count = len(post.liked_by_user)
+
     db.commit()
     db.refresh(post)
     return post
@@ -99,14 +111,12 @@ def create_hashtag(db: Session, post: models.PostModel):
             hashtag = models.HTModel(name=tag)
             db.add(hashtag)
             db.flush()
-        post.hashtag.append(hashtag)
-    db.commit()
-    db.refresh(post)
+        post.hashtags.append(hashtag)
     return post
 
 
 # find POSTS from hashtags
-def find_post_from_hashtag(db: Session, hashtag: str):
+async def find_post_from_hashtag(db: Session, hashtag: str):
     db_hashtag = db.query(models.HTModel).filter(models.HTModel.name == hashtag).first()
     if not db_hashtag:
         return None

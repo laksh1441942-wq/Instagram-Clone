@@ -21,7 +21,7 @@ class PostModel(Base):
     likes_count: Mapped[int] = mapped_column(Integer, default=0)
 
     # Mapping Users with Posts
-    users = relationship("UserModel", back_populates="posts")
+    author = relationship("UserModel", back_populates="posts")
 
     # multiple relation mapping
     liked_by_user = relationship(

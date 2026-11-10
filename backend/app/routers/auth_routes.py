@@ -49,7 +49,7 @@ async def login(
 # Reset Password
 @router.post("/sendcode")
 async def reset_sent_code(email: str, db: Session = Depends(get_db)):
-    db_user = await services.check_existing_user(db, email)
+    db_user = await services.check_existing_user(db, username="", email=email)
     if not db_user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"

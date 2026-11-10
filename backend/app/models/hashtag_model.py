@@ -5,7 +5,7 @@ from sqlalchemy.orm import mapped_column, Mapped, relationship
 post_hashtags = Table(
     "Hash_Tag_Table",
     Base.metadata,
-    Column("id", primary_key=True),
+    Column("id", Integer, primary_key=True),
     Column("post_id", ForeignKey("Post_Table.id")),
     Column("hashtag_id", ForeignKey("Hash_Tag_Model.id")),
 )
