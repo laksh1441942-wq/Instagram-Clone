@@ -24,6 +24,10 @@ FastAPI backend and Flutter frontend.
 - [x] Added Black formatting configuration for Python files.
 - [x] Added an initial Flutter frontend with responsive layout scaffolding.
 - [x] Added a login screen and shared text-field widget.
+- [x] Added a mobile app bar with Instagram branding and create/activity actions.
+- [x] Added mobile navigation for Home, Reels, Messages, Explore, and Profile.
+- [x] Added page-based navigation with active and inactive tab states.
+- [x] Added shared Instagram-inspired colors for the Flutter UI.
 
 ### Next steps
 

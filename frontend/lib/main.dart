@@ -15,13 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Instagram Clone',
-      theme: ThemeData.dark().copyWith(
-        colorScheme: const ColorScheme.dark(
-          primary: Color.fromARGB(255, 249, 251, 251),
-          secondary: Color.fromARGB(255, 7, 7, 7),
-        ),
-        scaffoldBackgroundColor: Colors.black,
-      ),
+      theme: ThemeData.dark(),
       home: MobileScreenLayout(),
     );
   }
