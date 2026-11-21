@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:frontend/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:frontend/utils/global_variables.dart';
 
 class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({super.key});
@@ -45,13 +46,14 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
             IconButton(
               onPressed: () {
                 setState(() {
-                  _page = 6;
+                  _page = 5;
+                  pageController.jumpToPage(_page);
                 });
               },
               icon: Icon(
                 Icons.add,
                 size: 32,
-                color: _page == 6
+                color: _page == 5
                     ? AppColors.primaryTextColor
                     : AppColors.secondaryTextColor,
               ),
@@ -65,8 +67,19 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
               ),
             ),
             IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.favorite_border_outlined, size: 32),
+              onPressed: () {
+                setState(() {
+                  _page = 6;
+                  pageController.jumpToPage(_page);
+                });
+              },
+              icon: Icon(
+                Icons.favorite_border_outlined,
+                size: 32,
+                color: _page == 6
+                    ? AppColors.primaryTextColor
+                    : AppColors.secondaryTextColor,
+              ),
             ),
           ],
         ),
@@ -75,13 +88,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
         controller: pageController,
         onPageChanged: onPageChanged,
         physics: NeverScrollableScrollPhysics(),
-        children: [
-          Center(child: Text("Home")),
-          Center(child: Text("Reels")),
-          Center(child: Text("Notif")),
-          Center(child: Text("Explore")),
-          Center(child: Text("profile")),
-        ],
+        children: homeScreenItems,
       ),
 
       bottomNavigationBar: CupertinoTabBar(
