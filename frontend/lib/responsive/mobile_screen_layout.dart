@@ -2,9 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:frontend/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:frontend/utils/global_variables.dart';
 
 class MobileScreenLayout extends StatefulWidget {
+  
+
   const MobileScreenLayout({super.key});
 
   @override
@@ -38,52 +39,16 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final homeScreenItems = [
+      const Center(child: Text("Home")),
+      const Center(child: Text("Reels")),
+      const Center(child: Text("Notifications")),
+      const Center(child: Text("Explore")),
+      const Center(child: Text("profile")),
+    ];
+
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _page = 5;
-                  pageController.jumpToPage(_page);
-                });
-              },
-              icon: Icon(
-                Icons.add,
-                size: 32,
-                color: _page == 5
-                    ? AppColors.primaryTextColor
-                    : AppColors.secondaryTextColor,
-              ),
-            ),
-            SvgPicture.asset(
-              "assets/instagram-text-icon.svg",
-              height: 32,
-              colorFilter: ColorFilter.mode(
-                AppColors.primaryTextColor,
-                BlendMode.srcIn,
-              ),
-            ),
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _page = 6;
-                  pageController.jumpToPage(_page);
-                });
-              },
-              icon: Icon(
-                Icons.favorite_border_outlined,
-                size: 32,
-                color: _page == 6
-                    ? AppColors.primaryTextColor
-                    : AppColors.secondaryTextColor,
-              ),
-            ),
-          ],
-        ),
-      ),
+      
       body: PageView(
         controller: pageController,
         onPageChanged: onPageChanged,

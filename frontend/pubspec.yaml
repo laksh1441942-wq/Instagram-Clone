@@ -28,17 +28,13 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  camera: ^0.12.2
   cupertino_icons: ^1.0.8
   flutter:
     sdk: flutter
   flutter_svg: ^2.3.2
 
 dev_dependencies:
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
@@ -57,6 +53,11 @@ flutter:
     - assets/instagram-message-icon.svg
     - assets/instagram-reels-icon.svg
     - assets/instagram-text-icon.svg
+    - assets/instagram-comment-icon.svg
+    - assets/instagram-save-icon.svg
+    - assets/instagram-share-icon.svg
+    - assets/instagram-heart-icon.svg
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
