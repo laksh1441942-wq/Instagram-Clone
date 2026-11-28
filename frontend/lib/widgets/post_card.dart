@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:frontend/utils/colors.dart';
+import 'package:frontend/widgets/like_animation.dart';
 
-class PostCard extends StatelessWidget {
+class PostCard extends StatefulWidget {
   const PostCard({super.key});
+
+  @override
+  State<PostCard> createState() => _PostCardState();
+}
+
+class _PostCardState extends State<PostCard> {
+  bool isLikeAnimating = false;
 
   @override
   Widget build(BuildContext context) {
@@ -75,57 +83,102 @@ class PostCard extends StatelessWidget {
             ),
             // IMAGE SECTION
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.35,
-            width: double.infinity,
-            child: Image.network(
-              "https://imgs.search.brave.com/PPkuhriUbI-hRlJjTIPNXmJVkzGMSRBVwR7KNte9wZM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/cGl4YWJheS5jb20v/cGhvdG8vMjAyNi8x/MC8yNS8yMC80OC9z/dWp1LWZvdG8td2F0/ZXJmYWxsLTEwNTQx/OTc0XzY0MC5qcGc",
+          GestureDetector(
+            onDoubleTap: () {
+              if (!isLikeAnimating) {
+                setState(() {
+                  isLikeAnimating = true;
+                });
+              }
+            },
+            child: Stack(
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.35,
+                  width: double.infinity,
+                  child: Image.network(
+                    "https://imgs.search.brave.com/PPkuhriUbI-hRlJjTIPNXmJVkzGMSRBVwR7KNte9wZM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/cGl4YWJheS5jb20v/cGhvdG8vMjAyNi8x/MC8yNS8yMC80OC9z/dWp1LWZvdG8td2F0/ZXJmYWxsLTEwNTQx/OTc0XzY0MC5qcGc",
+                  ),
+                ),
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: LikeAnimation(
+                      onEnd: () {
+                        if (mounted) {
+                          setState(() {
+                            isLikeAnimating = false;
+                          });
+                        }
+                      },
+                      isAnimating: isLikeAnimating,
+                      child: Icon(
+                        Icons.favorite,
+                        color: Colors.white,
+                        size: 100,
+                        shadows: [
+                          Shadow(color: Colors.black54, blurRadius: 12),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Row(
             children: [
+              SizedBox(width: 14),
               Row(
-                spacing: -3,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: SvgPicture.asset(
-                      "assets/instagram-heart-icon.svg",
-                      height: 22,
+                  SvgPicture.asset(
+                    "assets/instagram-heart-icon.svg",
+                    height: 20,
+
+                    colorFilter: ColorFilter.mode(
+                      AppColors.primaryTextColor,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  SizedBox(width: 4),
+                  Text("2.5K", style: TextStyle(fontWeight: FontWeight.bold)),
+                ],
+              ),
+              SizedBox(width: 8),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {},
+                    child: SvgPicture.asset(
+                      "assets/instagram-comment-icon.svg",
+                      height: 20,
                       colorFilter: ColorFilter.mode(
                         AppColors.primaryTextColor,
                         BlendMode.srcIn,
                       ),
                     ),
-                    color: Colors.white,
                   ),
-                  DefaultTextStyle(
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                    child: Text("2.5K"),
-                  ),
+                  SizedBox(width: 4),
+                  Text("500", style: TextStyle(fontWeight: FontWeight.bold)),
                 ],
               ),
-              IconButton(
-                onPressed: () {},
-                icon: SvgPicture.asset(
-                  "assets/instagram-comment-icon.svg",
-                  height: 22,
-                  colorFilter: ColorFilter.mode(
-                    AppColors.primaryTextColor,
-                    BlendMode.srcIn,
+              SizedBox(width: 8),
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {},
+                    child: SvgPicture.asset(
+                      "assets/instagram-share-icon.svg",
+                      height: 20,
+                      colorFilter: ColorFilter.mode(
+                        AppColors.primaryTextColor,
+                        BlendMode.srcIn,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: SvgPicture.asset(
-                  "assets/instagram-share-icon.svg",
-                  height: 22,
-                  colorFilter: ColorFilter.mode(
-                    AppColors.primaryTextColor,
-                    BlendMode.srcIn,
-                  ),
-                ),
+                  SizedBox(width: 4),
+                  Text("1K", style: TextStyle(fontWeight: FontWeight.bold)),
+                ],
               ),
               Expanded(
                 child: Align(
@@ -134,7 +187,7 @@ class PostCard extends StatelessWidget {
                     onPressed: () {},
                     icon: SvgPicture.asset(
                       "assets/instagram-save-icon.svg",
-                      height: 22,
+                      height: 20,
                       colorFilter: ColorFilter.mode(
                         AppColors.primaryTextColor,
                         BlendMode.srcIn,
@@ -145,7 +198,24 @@ class PostCard extends StatelessWidget {
               ),
             ],
           ),
-          Container(padding: EdgeInsets.symmetric(horizontal: 16)),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            child: RichText(
+              text: TextSpan(
+                style: TextStyle(color: AppColors.primaryTextColor),
+                children: [
+                  TextSpan(
+                    text: "Alex_Meri_Jaan",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(
+                    text:
+                        "  The photo is AI Generated but the prompt is human made so enjoys the view and share it with your friends",
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
